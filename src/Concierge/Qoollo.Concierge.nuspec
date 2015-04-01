@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>Qoollo.Concierge</title>
+    <authors>Qoollo</authors>
+    <owners>Qoollo</owners>
+    <licenseUrl>https://github.com/qoollo/Concierge/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/qoollo/Concierge</projectUrl>
+    <!--<iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>-->
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>
+      Make a console app work as an self-installable interactive WindowsService with debug mode and commands
+    </description>
+    <releaseNotes>Initial public release</releaseNotes>
+    <copyright>$copyright$</copyright>
+    <tags>Service WindowsService WinService SOA CommandLine cmd microservices</tags>
+    <references>
+      <reference file="$id$.dll" />
+    </references>
+   <frameworkAssemblies>
+     <frameworkAssembly assemblyName="System.Configuration.Install" targetFramework="net40" />    
+    </frameworkAssemblies>
+  </metadata>
+	<files>
+    <file src="Samples\SampleProgram.cs" target="content\ConciergeSamples" />
+    <file src="Samples\SampleApp.config" target="content\ConciergeSamples" />
+    <file src="Samples\ConciergeInstaller.cs" target="content\" />
+	</files>
+</package>
