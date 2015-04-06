@@ -28,6 +28,8 @@ namespace Qoollo.Concierge.UniversalExecution.AppModes
 
                 RegistrateCommand(CommandExecutorProxy.Build("exit", () => Executable.Stop(), "Stop program"));
             }
+            else
+                Console.WriteLine(WinServiceStatus.Get(executableBuilder.WindowsServiceConfig.InstallName).ToString());
         }
     }
 }
