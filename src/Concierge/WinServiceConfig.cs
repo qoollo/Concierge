@@ -10,6 +10,7 @@ namespace Qoollo.Concierge
         public const bool RecoverDefault = true;
         public const bool StartDefault = true;
         public const bool AsyncStartDefault = true;
+        public const int ServiceOperationsTimeoutMlsDefault = 10000;
 
         private string _username;
 
@@ -21,6 +22,7 @@ namespace Qoollo.Concierge
             Username = UserDefault;
             Password = PassDefault;
             Async = AsyncStartDefault;
+            ServiceOperationsTimeoutMls = ServiceOperationsTimeoutMlsDefault;
         }
 
         public string DisplayName { get; set; }
@@ -44,6 +46,8 @@ namespace Qoollo.Concierge
                     _username = @".\" + _username;
                 }
             }
-        }        
+        }
+
+        public int ServiceOperationsTimeoutMls { get; set; }
     }
 }
