@@ -19,17 +19,25 @@ namespace Qoollo.Concierge.UniversalExecution.AppModes
         protected override void Build(string[] args, ExecutableBuilder executableBuilder)
         {
             if (!WinServiceHelpers.IsServiceInstalled(executableBuilder.WindowsServiceConfig.InstallName))
+                StartAsDebug(args, executableBuilder);
+            else if (WinServiceHelpers.IsServiceStopped(executableBuilder.WindowsServiceConfig.InstallName))
             {
-                RegistrateExecutable(executableBuilder.Build(CommandExecutorProxy, RunMode.Debug,
-                    executableBuilder.WindowsServiceConfig.Async, args));
-
-                Console.WriteLine(
-                    WinServiceMessages.ServiceStartedMessage(executableBuilder.WindowsServiceConfig.DisplayName));
-
-                RegistrateCommand(CommandExecutorProxy.Build("exit", () => Executable.Stop(), "Stop program"));
+                Console.WriteLine(WinServiceStatus.Get(executableBuilder.WindowsServiceConfig.InstallName).ToString());
+                StartAsDebug(args, executableBuilder);
             }
             else
                 Console.WriteLine(WinServiceStatus.Get(executableBuilder.WindowsServiceConfig.InstallName).ToString());
+        }
+
+        private void StartAsDebug(string[] args, ExecutableBuilder executableBuilder)
+        {
+            RegistrateExecutable(executableBuilder.Build(CommandExecutorProxy, RunMode.Debug,
+                    executableBuilder.WindowsServiceConfig.Async, args));
+
+            Console.WriteLine(
+                WinServiceMessages.ServiceStartedMessage(executableBuilder.WindowsServiceConfig.DisplayName));
+
+            RegistrateCommand(CommandExecutorProxy.Build("exit", () => Executable.Stop(), "Stop program"));
         }
     }
 }
