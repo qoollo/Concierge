@@ -59,6 +59,16 @@ namespace Qoollo.Concierge.WindowsService
             return ServiceController.GetServices().Any(s => s.ServiceName == name);
         }
 
+        public static bool IsServiceStopped(string name)
+        {
+            if (name == null) return false;
+            var service = GetServiceController(name);
+            if (service == null)
+                return false;
+
+            return service.Status == ServiceControllerStatus.Stopped;
+        }
+
         public static ServiceController GetServiceController(string name)
         {
             if (name == null) return null;
