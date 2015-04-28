@@ -24,19 +24,21 @@ namespace Qoollo.Concierge.UniversalExecution.Core
         {
             var ret = new List<CmdArgumentSpec>
             {
-                new CmdArgumentSpec("name", "Использовать другое имя сервиса",
+                new CmdArgumentSpec("name", "change service name",
                     str =>
                     {
                         executableBuilder.WindowsServiceConfig.InstallName = str;
                         executableBuilder.WindowsServiceConfig.DisplayName = str;
                     }, isVisible: true),
-                new CmdArgumentSpec("user", "Запускать сервис от имени пользователя",
+                new CmdArgumentSpec("user", "change user",
                     str => executableBuilder.WindowsServiceConfig.Username = str, isVisible: true),
-                new CmdArgumentSpec("password", "Пароль для пользователя сервиса",
+                new CmdArgumentSpec("password", "change password",
                     str => executableBuilder.WindowsServiceConfig.Password = str, isVisible: true),
-                new CmdArgumentSpec("host", "Изменить адрес подключения к сервису",
+                new CmdArgumentSpec("host", "change connection to service",
                     str => _paramContainer.ServiceHostParameters.Add(new Uri(str)),
-                    isVisible: true)
+                    isVisible: true),
+                new CmdArgumentSpec("timeout", "change service operations timeout",
+                    str => executableBuilder.WindowsServiceConfig.ServiceOperationsTimeoutMls = int.Parse(str), isVisible: true)
             };
 
             return ret;
@@ -56,7 +58,7 @@ namespace Qoollo.Concierge.UniversalExecution.Core
                 CmdArgForModeWithArgument(new WinServiceMode(), executableBuilder),
                 CmdArgForMode(new AttachMode(executableBuilder.WindowsServiceConfig), executableBuilder),
 
-                new CmdArgumentSpec("help", "Показать аргументы",
+                new CmdArgumentSpec("help", "show arguments",
                     () => Console.WriteLine(CustomConsoleHelpers.FormatHelp(parametersManager.Help())), true, true),
             };
             return ret;

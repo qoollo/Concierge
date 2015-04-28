@@ -127,7 +127,8 @@ namespace Qoollo.Concierge.UniversalExecution.CommandLineArguments
                 string key = split[i];
                 string value = string.Empty;
 
-                if (i < split.Count - 1 && !value.StartsWith("-") && !value.StartsWith("--"))
+                if (i < split.Count - 1 && !value.StartsWith("-") && !value.StartsWith("--")
+                    && (key.StartsWith("-") || key.StartsWith("--")))
                     value = split[++i];
 
                 ret.Add(key, value);

@@ -30,7 +30,7 @@ namespace Qoollo.Concierge.Commands.Executors
 
         public override string Execute(CommandSpec command)
         {
-            string concat = command.Arguments.Aggregate("", (current, kv) => current + (kv.Key + " " + kv.Value));
+            string concat = command.Arguments.Aggregate("", (current, kv) => current + (kv.Key + " " + kv.Value + " "));
 
             return _action(command.Name, concat.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries));
         }

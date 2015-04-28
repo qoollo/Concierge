@@ -18,9 +18,10 @@ namespace Qoollo.Concierge.WindowsService
         /// </summary>
         /// <param name="serviceName"></param>
         /// <param name="args"></param>
-        public static void InstallWindowsService(string serviceName, IEnumerable<string> args)
+        /// <param name="timeout"></param>
+        public static void InstallWindowsService(string serviceName, IEnumerable<string> args, int timeout)
         {
-            InstallService(serviceName, false, AssemblyHelper.EntryAssembly.Location, args);
+            InstallService(serviceName, false, AssemblyHelper.EntryAssembly.Location, args, timeout);
         }
 
         /// <summary>
@@ -28,30 +29,12 @@ namespace Qoollo.Concierge.WindowsService
         /// </summary>
         /// <param name="serviceName"></param>
         /// <param name="args"></param>
-        public static void UninstallWindowsService(string serviceName, IEnumerable<string> args)
+        /// <param name="timeout"></param>
+        public static void UninstallWindowsService(string serviceName, IEnumerable<string> args, int timeout)
         {
-            InstallService(serviceName, true, Assembly.GetEntryAssembly().Location, args);
+            InstallService(serviceName, true, Assembly.GetEntryAssembly().Location, args, timeout);
         }
-
-        public static void RestartService(string serviceName, int timeoutMilliseconds = 30000)
-        {
-            if (!IsServiceInstalled(serviceName))
-                return;
-
-            ServiceController service = GetServiceController(serviceName);
-
-            int millisec1 = Environment.TickCount;
-            TimeSpan timeout = TimeSpan.FromMilliseconds(timeoutMilliseconds);
-            service.Stop();
-            service.WaitForStatus(ServiceControllerStatus.Stopped, timeout);
-
-            // count the rest of the timeout
-            int millisec2 = Environment.TickCount;
-            timeout = TimeSpan.FromMilliseconds(timeoutMilliseconds - (millisec2 - millisec1));
-
-            service.Start();
-            service.WaitForStatus(ServiceControllerStatus.Running, timeout);
-        }
+        
 
         public static bool IsServiceInstalled(string name)
         {
@@ -124,9 +107,18 @@ namespace Qoollo.Concierge.WindowsService
             service.WaitForStatus(ServiceControllerStatus.Stopped, timeout);
         }
 
-        public static void InstallService(string name, bool uninstall, string exePath, IEnumerable<string> args)
+        public static void RestartService(string serviceName, int timeoutMilliseconds = 30000)
+        {
+            if (!IsServiceInstalled(serviceName))
+                return;
+
+            StopService(serviceName, timeoutMilliseconds);
+            StartService(serviceName, timeoutMilliseconds);
+        }
+        public static void InstallService(string name, bool uninstall, string exePath, IEnumerable<string> args, int timeout)
         {
             Contract.Requires(name != null && exePath != null);
+            timeout = timeout <= 0 ? -1 : timeout;
             bool serviceExists = IsServiceInstalled(name);
             List<string> fullArgs = (args != null) ? args.ToList() : new List<string>(2);
 
@@ -143,10 +135,13 @@ namespace Qoollo.Concierge.WindowsService
                 {
                     UninstallviaWmi(name);
                 }
-                while (IsServiceInstalled(name))
+
+                int timer = 0;
+                while (IsServiceInstalled(name) && (timeout > timer || timeout == -1))
                 {
                     Console.WriteLine("Waiting for serivce to uninstall");
                     Thread.Sleep(1000);
+                    timer += 1000;
                 }
             }
             else // Install
@@ -156,10 +151,12 @@ namespace Qoollo.Concierge.WindowsService
                     throw new InstallException("Failed to install service. Service already exists.");
                 ManagedInstallerClass.InstallHelper(fullArgs.ToArray());
 
-                while (!IsServiceInstalled(name))
+                int timer = 0;
+                while (!IsServiceInstalled(name) && (timeout > timer || timeout == -1))
                 {
                     Console.WriteLine("Waiting for serivce to install");
                     Thread.Sleep(1000);
+                    timer += 1000;
                 }
             }
         }
