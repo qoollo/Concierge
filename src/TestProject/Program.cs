@@ -16,7 +16,7 @@ namespace TestProject
 
             var user = new UserExecutor {Message = "OLOLOLOLO"};
 
-            var appBuilder = new AppBuilder(user);
+            var appBuilder = new AppBuilder(true, user);
 
             appBuilder.AddStartupParameter("-s", () => { });
             appBuilder.AddCommand("get", () =>

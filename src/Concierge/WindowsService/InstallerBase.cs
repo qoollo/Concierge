@@ -66,18 +66,18 @@ namespace Qoollo.Concierge.WindowsService
             });
         }
 
-        public void InstallAsWindowsService(string install, string serviceStartup)
+        public void InstallAsWindowsService(string install, string serviceStartup, int timeout)
         {
             WinServiceHelpers.InstallWindowsService(WinServiceConfig.InstallName,
-                ToInstallParameters(WinServiceConfig, install, serviceStartup));
+                ToInstallParameters(WinServiceConfig, install, serviceStartup), timeout);
         }
 
-        public void UninstallFromWindowsServices()
+        public void UninstallFromWindowsServices(int timeout)
         {
             if (WinServiceHelpers.IsServiceInstalled(WinServiceConfig.InstallName))
             {
                 WinServiceHelpers.UninstallWindowsService(WinServiceConfig.InstallName,
-                    ToInstallParameters(WinServiceConfig));
+                    ToInstallParameters(WinServiceConfig), timeout);
             }
         }
       

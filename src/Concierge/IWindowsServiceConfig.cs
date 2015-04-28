@@ -21,5 +21,7 @@ namespace Qoollo.Concierge
         string Password { set; get; }
 
         string Username { set; get; }
+
+        int ServiceOperationsTimeoutMls { set; get; }
     }
 }
