@@ -208,6 +208,7 @@
     <Compile Include="Logger\FileLogger.cs" />
     <Compile Include="Logger\IConciergeLogger.cs" />
     <Compile Include="UniversalExecution\AppModes\AppModeNames.cs" />
+    <Compile Include="UniversalExecution\ParamsContext\ServiceInstallerCommand.cs" />
     <Compile Include="UniversalExecution\CommandLineArguments\StartupParametersManager.cs" />
     <Compile Include="UniversalExecution\CommandLineArguments\StartupParametersManagerSimpleParseLogic.cs" />
     <Compile Include="Commands\CommandExecutorProxyAggregate.cs" />

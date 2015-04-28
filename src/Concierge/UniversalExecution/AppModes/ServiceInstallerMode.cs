@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using Qoollo.Concierge.Commands.Executors;
 using Qoollo.Concierge.UniversalExecution.CommandLineArguments;
 using Qoollo.Concierge.UniversalExecution.Core;
+using Qoollo.Concierge.UniversalExecution.ParamsContext;
 using Qoollo.Concierge.WindowsService;
 
 namespace Qoollo.Concierge.UniversalExecution.AppModes
@@ -22,10 +24,59 @@ namespace Qoollo.Concierge.UniversalExecution.AppModes
     {
         private string[] _args = null;
         private ServiceRunMode _mode = ServiceRunMode.none;
+        private CommandExecutorFromMethod<ServiceInstallerCommand> _commandExecutor;
+        private int _timeout = -1;
 
         public ServiceInstallerMode()
             : base(AppModeNames.Service, "Run program in ServiceInstaller mode", setNewCommands: false)
         {
+            _commandExecutor = new CommandExecutorFromMethod<ServiceInstallerCommand>("sevice", "",
+                (Func<ServiceInstallerCommand, string>) ParseArguments);
+        }
+
+        private string ParseArguments(ServiceInstallerCommand obj)
+        {
+            if (_mode == ServiceRunMode.none && obj.RunMode == null)
+                return "Need run mode argument for command";
+
+            if (_mode == ServiceRunMode.none)
+            {
+                var ret = CheckAndProcessFirstArgument(obj.RunMode);
+                if (!ret)
+                    return "Wrong argument: " + obj.RunMode;
+
+                List<string> list = _args.ToList();
+                list.RemoveAt(0);
+                list.RemoveAt(0);
+                _args = list.ToArray();
+            }
+
+            _timeout = obj.Timeout;
+
+            if (_timeout != -1)
+            {
+                List<string> list = _args.ToList();
+                list.RemoveAt(0);
+                list.RemoveAt(0);
+                _args = list.ToArray();
+            }
+
+            return HttpStatusCode.OK.ToString();
+        }
+
+        private bool CheckAndProcessFirstArgument(string argument)
+        {
+            ServiceRunMode mode;
+            var ret = Enum.TryParse(argument, out mode);
+            
+            if (ret && !Enum.IsDefined(typeof(ServiceRunMode), mode))
+                ret = false;
+
+            if (ret && Enum.IsDefined(typeof (ServiceRunMode), mode))
+                _mode = mode;
+
+
+            return ret;
         }
 
         public override bool Prepare(string args, out string result)
@@ -50,16 +101,21 @@ namespace Qoollo.Concierge.UniversalExecution.AppModes
                 return false;
             }
 
-            bool ret = Prepare(args[0], out result);
+            _mode = ServiceRunMode.none;
 
-            if (ret)
+            _args = args;
+
+            if (CheckAndProcessFirstArgument(_args[0]))
             {
-                List<string> list = args.ToList();
-                list.RemoveAt(0);
-                _args = list.ToArray();
-            }
+                var temp = _args.ToList();
+                temp.RemoveAt(0);
+                _args = temp.ToArray();
+            }            
 
-            return ret;
+            var spec = StartupParametersManager.Split(_args.Aggregate("service", (current, s) => current + (" " + s)));
+            result = _commandExecutor.Execute(spec);
+            
+            return result == HttpStatusCode.OK.ToString();
         }
 
         protected override void Build(string[] args, ExecutableBuilder executableBuilder)
