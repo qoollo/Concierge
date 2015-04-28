@@ -25,7 +25,7 @@ namespace Qoollo.Concierge.UniversalExecution.AppModes
         private string[] _args = null;
         private ServiceRunMode _mode = ServiceRunMode.none;
         private CommandExecutorFromMethod<ServiceInstallerCommand> _commandExecutor;
-        private int _timeout = -1;
+        private int _timeout = 30000;
 
         public ServiceInstallerMode()
             : base(AppModeNames.Service, "Run program in ServiceInstaller mode", setNewCommands: false)
@@ -53,7 +53,7 @@ namespace Qoollo.Concierge.UniversalExecution.AppModes
 
             _timeout = obj.Timeout;
 
-            if (_timeout != -1)
+            if (_args.Contains("-t"))
             {
                 List<string> list = _args.ToList();
                 list.RemoveAt(0);
@@ -134,13 +134,13 @@ namespace Qoollo.Concierge.UniversalExecution.AppModes
                     Uninstall(executor);
                     break;
                 case ServiceRunMode.start:
-                    WinServiceHelpers.StartService(winServiceConfig.InstallName);
+                    WinServiceHelpers.StartService(winServiceConfig.InstallName, _timeout);
                     break;
                 case ServiceRunMode.stop:
-                    WinServiceHelpers.StopService(winServiceConfig.InstallName);
+                    WinServiceHelpers.StopService(winServiceConfig.InstallName, _timeout);
                     break;
                 case ServiceRunMode.restart:
-                    WinServiceHelpers.RestartService(winServiceConfig.InstallName);                    
+                    WinServiceHelpers.RestartService(winServiceConfig.InstallName, _timeout);                    
                     break;
             }
             Console.WriteLine(WinServiceStatus.Get(winServiceConfig.InstallName).ToString());
@@ -149,14 +149,14 @@ namespace Qoollo.Concierge.UniversalExecution.AppModes
 
         private void Uninstall(InstallerBase installer)
         {
-            installer.UninstallFromWindowsServices();
+            installer.UninstallFromWindowsServices(_timeout);
         }
 
         private void Install(InstallerBase installer, string[] args, IWindowsServiceConfig winServiceConfig)
         {
             string install = StartupParametersManager.ConcatArgs(args);
 
-            installer.InstallAsWindowsService(install, ParamContainer.ServiceHostParameters.Parameters);
+            installer.InstallAsWindowsService(install, ParamContainer.ServiceHostParameters.Parameters, _timeout);
             ParamContainer.ServiceHostParameters.Clear();
 
             if (winServiceConfig.RestartOnRecover)

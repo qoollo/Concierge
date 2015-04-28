@@ -8,7 +8,7 @@ namespace Qoollo.Concierge.UniversalExecution.ParamsContext
         [Parameter(ShortKey = 'm')]
         public string RunMode { get; set; }
 
-        [Parameter(ShortKey = 't', LongKey = "timeout", IsRequired = false, DefaultValue = -1)]
+        [Parameter(ShortKey = 't', LongKey = "timeout", IsRequired = false, DefaultValue = 30000)]
         public int Timeout { get; set; }
     }
 }
