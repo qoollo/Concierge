@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.ServiceModel;
 using System.ServiceModel.Configuration;
+using System.ServiceModel.Description;
 
 namespace Qoollo.Concierge.FunctionalTests.TestClasses
 {
@@ -13,7 +14,7 @@ namespace Qoollo.Concierge.FunctionalTests.TestClasses
         public const string ClientUri = "net.tcp://localhost:8010/Concierge";
         public const string ServiceUri = "net.tcp://localhost:8010/Concierge";
 
-        public static void UpdateConfig(bool empty = false, string endpointName = "localConnection")
+        public static void UpdateConfig(bool empty = false, string endpointName = "localConnection", bool addHttpGetEnabled = false)
         {
 
             Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
@@ -26,6 +27,16 @@ namespace Qoollo.Concierge.FunctionalTests.TestClasses
             service.Client.Endpoints.Clear();
             service.Services.Services.Clear();
             service.Behaviors.ServiceBehaviors.Clear();
+
+            if (addHttpGetEnabled)
+            {
+                service.Behaviors.ServiceBehaviors.Add(new ServiceBehaviorElement());
+                var behavior =  service.Behaviors.ServiceBehaviors[0];
+                behavior.Add(new ServiceMetadataPublishingElement
+                {
+                    HttpGetEnabled = true
+                });
+            }
 
             if (!empty)
             {

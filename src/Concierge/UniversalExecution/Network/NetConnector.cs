@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.ServiceModel;
+using System.ServiceModel.Description;
 using Qoollo.Concierge.Commands.Routers;
 using Qoollo.Concierge.Logger;
 using Qoollo.Concierge.UniversalExecution.Network.Client;
@@ -24,16 +25,16 @@ namespace Qoollo.Concierge.UniversalExecution.Network
         public static ReceiverHost CreateService(CommandRouter router, Uri[] baseAddress, IConciergeLogger logger)
         {
             ReceiverHost host;
-
+            
             if (baseAddress.Length != 0)
-            {
+            {                
                 host = new ReceiverHost(router, logger, typeof (NetCommandReceiver));
                 SetEndpointToService(host, baseAddress);
             }
             else
             {
                 host = new ReceiverHost(router, logger, typeof(NetCommandReceiver));
-                if(host.Description.Endpoints.Count==0)
+                if (host.Description.Endpoints.Count == 0)
                     SetEndpointToService(host, DefaultUri);
             }
 
@@ -42,6 +43,14 @@ namespace Qoollo.Concierge.UniversalExecution.Network
 
         private static void SetEndpointToService(ReceiverHost host, Uri[] uri)
         {
+            var behavior =
+                host.Description.Behaviors.FirstOrDefault(x => x.GetType() == typeof (ServiceMetadataBehavior))
+                as ServiceMetadataBehavior ;
+            if (behavior != null)
+            {
+                behavior.HttpGetEnabled = false;
+            }
+
             while (host.Description.Endpoints.Count != 0)
                 host.Description.Endpoints.RemoveAt(0);
 
