@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.ServiceModel.Description;
 using FluentAssert;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Qoollo.Concierge.Commands;
@@ -18,17 +19,17 @@ namespace Qoollo.Concierge.FunctionalTests.AppBuilderTests
     [TestClass]
     public class WcfTests
     {
-        private const string Default = "net.tcp://localhost:8000/Concierge";        
+        private const string Default = "net.tcp://localhost:8000/Concierge";
         private const string ServiceUri2 = "net.tcp://localhost:8020/Concierge";
 
 
         private TRet GetPrivtaeField<TRet>(object obj) where TRet : class
         {
             var list = obj.GetType().GetFields(BindingFlags.Public |
-                                              BindingFlags.NonPublic |
-                                              BindingFlags.Instance);
+                                               BindingFlags.NonPublic |
+                                               BindingFlags.Instance);
 
-            return list.First(x => x.FieldType.FullName == typeof(TRet).ToString()).GetValue(obj) as TRet;
+            return list.First(x => x.FieldType.FullName == typeof (TRet).ToString()).GetValue(obj) as TRet;
         }
 
         [TestMethod]
@@ -38,7 +39,7 @@ namespace Qoollo.Concierge.FunctionalTests.AppBuilderTests
             string str = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
             Trace.WriteLine(str);
             Trace.WriteLine(File.ReadAllText(str));
-            
+
             var factory = NetConnector.CreateChannelFromConfig<INetCommunication>();
             Trace.WriteLine(factory);
 
@@ -88,13 +89,13 @@ namespace Qoollo.Concierge.FunctionalTests.AppBuilderTests
             var app = new AppBuilder(true);
 
             app.WithDefaultStartupString("")
-                .Run(new[] { "-host", argHost });
+                .Run(new[] {"-host", argHost});
 
 
             var modeManger = GetPrivtaeField<ModeManager>(app);
             var paramContainer = GetPrivtaeField<ParamContainer>(modeManger);
 
-            var connection = NetConnector.CreateConnection<INetCommunication>(new string[] { },
+            var connection = NetConnector.CreateConnection<INetCommunication>(new string[] {},
                 paramContainer.ServiceHostParameters).ShouldNotBeNull();
 
             connection.EndPoint.Address.Uri.OriginalString.ShouldBeEqualTo(argHost);
@@ -109,13 +110,13 @@ namespace Qoollo.Concierge.FunctionalTests.AppBuilderTests
             var app = new AppBuilder(true);
 
             app.WithDefaultStartupString("")
-                .Run(new[] { "-host", argHost });
+                .Run(new[] {"-host", argHost});
 
 
             var modeManger = GetPrivtaeField<ModeManager>(app);
             var paramContainer = GetPrivtaeField<ParamContainer>(modeManger);
 
-            var connection = NetConnector.CreateConnection<INetCommunication>(new string[] { },
+            var connection = NetConnector.CreateConnection<INetCommunication>(new string[] {},
                 paramContainer.ServiceHostParameters).ShouldNotBeNull();
 
             connection.EndPoint.Address.Uri.OriginalString.ShouldBeEqualTo(argHost);
@@ -126,7 +127,8 @@ namespace Qoollo.Concierge.FunctionalTests.AppBuilderTests
         {
             ConfigHelper.UpdateConfig();
 
-            var host = NetConnector.CreateService(new LocalRouter(new CommandExecutorProxy()), new Uri[0], new ConsoleLogger());
+            var host = NetConnector.CreateService(new LocalRouter(new CommandExecutorProxy()), new Uri[0],
+                new ConsoleLogger());
 
             host.Open();
             try
@@ -150,15 +152,15 @@ namespace Qoollo.Concierge.FunctionalTests.AppBuilderTests
 
             host.Open();
             try
-            {                
+            {
                 host.Description.Endpoints.Count.ShouldBeEqualTo(1);
-                host.Description.Endpoints[0].Address.Uri.OriginalString.ShouldBeEqualTo(ServiceUri2);    
+                host.Description.Endpoints[0].Address.Uri.OriginalString.ShouldBeEqualTo(ServiceUri2);
             }
             finally
-            {                
+            {
                 host.Close();
             }
-            
+
         }
 
         [TestMethod]
@@ -167,7 +169,7 @@ namespace Qoollo.Concierge.FunctionalTests.AppBuilderTests
             ConfigHelper.UpdateConfig();
 
             var host = NetConnector.CreateService(new LocalRouter(new CommandExecutorProxy()),
-                new[] { new Uri(ServiceUri2) }, new ConsoleLogger());
+                new[] {new Uri(ServiceUri2)}, new ConsoleLogger());
 
             host.Open();
             try
@@ -195,6 +197,34 @@ namespace Qoollo.Concierge.FunctionalTests.AppBuilderTests
             {
                 host.Description.Endpoints.Count.ShouldBeEqualTo(1);
                 host.Description.Endpoints[0].Address.Uri.OriginalString.ShouldBeEqualTo(ServiceUri2);
+            }
+            finally
+            {
+                host.Close();
+            }
+        }
+
+        [TestMethod]
+        public void
+            NetConnetor_CreateServer_WithoutParamsAndConfigWithHttpGetEnabled_UserDefaultEndpointAndSetHttpGetEnabledToFalse
+            ()
+        {
+            ConfigHelper.UpdateConfig(true, addHttpGetEnabled: true);
+
+            NetConnector.DefaultUri = new[] {new Uri(ServiceUri2)};
+            var host = NetConnector.CreateService(new LocalRouter(new CommandExecutorProxy()), new Uri[0],
+                new ConsoleLogger());
+
+            host.Open();
+            try
+            {
+                host.Description.Endpoints.Count.ShouldBeEqualTo(1);
+                host.Description.Endpoints[0].Address.Uri.OriginalString.ShouldBeEqualTo(ServiceUri2);
+
+                var behavior =
+                    host.Description.Behaviors.FirstOrDefault(x => x.GetType() == typeof (ServiceMetadataBehavior))
+                        as ServiceMetadataBehavior;
+                behavior.HttpGetEnabled.ShouldBeFalse();
             }
             finally
             {
