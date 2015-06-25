@@ -119,7 +119,7 @@ namespace Qoollo.Concierge.Commands
         public string GetHelp(string name)
         {
             if (IsCommandExist(name))
-                return _commands[name].Description;
+                return _commands[name].GetHelp();
             return "Command not found";
         }
 
@@ -163,9 +163,10 @@ namespace Qoollo.Concierge.Commands
             return new CommandExecutorWithArgs(name, helpText, (n, dict) => action(dict));
         }
 
-        public static CommandExecutor Build(string name, Func<string[], string> action, string helpText = "")
+        public static CommandExecutor Build(string name, Func<string[], string> action, string helpText = "", 
+            string smartHelp = "")
         {
-            return new CommandExecutorWithArgs(name, helpText, (n, dict) => action(dict));
+            return new CommandExecutorWithArgs(name, helpText, (n, dict) => action(dict), smartHelp);
         }
 
         public static CommandExecutor Build<T>(string name, Action<T> action, string helpText = "")

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Qoollo.Concierge.UniversalExecution.Network;
+using Qoollo.Concierge.Whale;
 
 namespace Qoollo.Concierge.Commands.Executors
 {
@@ -74,5 +76,19 @@ namespace Qoollo.Concierge.Commands.Executors
         }
 
         protected abstract string ExecuteGeneric(TCommand command);
+
+        public override string GetHelp()
+        {
+            var list = new List<string>();
+            if (_parameters.Count == 0)
+                list.Add(Description);
+            else
+            {
+                list.AddRange(
+                    _parameters.Select(parameter => parameter.Attribute.ShortKey + " " + parameter.Attribute.Description));
+            }
+
+            return CustomConsoleHelpers.FormatHelp(list);
+        }
     }
 }

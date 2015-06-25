@@ -7,12 +7,12 @@ using Qoollo.Concierge.UniversalExecution.Core;
 using Qoollo.Concierge.UniversalExecution.Decorators;
 using Qoollo.Concierge.UniversalExecution.Network;
 using Qoollo.Concierge.UniversalExecution.Network.Client;
-using Qoollo.Concierge.WindowsService;
 
 namespace Qoollo.Concierge.UniversalExecution.AppModes
 {
     internal class AttachMode : AppMode
     {
+        private string[] _args = null;
         private readonly IWindowsServiceConfig _winServiceConfig;
         private StableConcurrentConnection<INetCommunication> _connection;
 
@@ -25,7 +25,9 @@ namespace Qoollo.Concierge.UniversalExecution.AppModes
 
         public override bool Prepare(string[] args, out string result)
         {
-            _connection = NetConnector.CreateConnection<INetCommunication>(args, ParamContainer.ServiceHostParameters);
+            _args = args;
+            _connection = NetConnector.CreateConnection<INetCommunication>(new string[0],
+                ParamContainer.ServiceHostParameters);
 
             bool ret = true;
             result = HttpStatusCode.OK.ToString();
@@ -41,10 +43,11 @@ namespace Qoollo.Concierge.UniversalExecution.AppModes
 
         protected override void Build(string[] args, ExecutableBuilder executableBuilder)
         {
-            if (args == null || args.Length == 0)
+            _args = _args ?? args;
+            if (_args == null || _args.Length == 0)
                 FullAttach(executableBuilder);
             else
-                AttachForOneCommand(args, executableBuilder);
+                AttachForOneCommand(_args, executableBuilder);
         }
 
         private void FullAttach(ExecutableBuilder executableBuilder)
