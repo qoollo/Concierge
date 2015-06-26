@@ -10,3 +10,10 @@ Make a console app work as an self-installable interactive WindowsService with d
 ##### 30.04.2015 nmenshov version 1.0.5.2
 
 * Fix bug with HttpGetEnabled field in app.config.
+
+##### 26.06.2015 nmenshov version 1.0.5.3
+
+* Add help for commands
+* Fix bug with Attach for one command
+* Change start message for Interactive mode
+
