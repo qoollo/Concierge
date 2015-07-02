@@ -13,7 +13,10 @@
     <description>
       Make a console app work as an self-installable interactive WindowsService with debug mode and commands
     </description>
-    <releaseNotes>Initial public release</releaseNotes>
+    <releaseNotes>
+		Ability to add value hint to command line argument
+		Help for arguments displays values next to key
+	</releaseNotes>
     <copyright>$copyright$</copyright>
     <tags>Service WindowsService WinService SOA CommandLine cmd microservices</tags>
     <references>
