@@ -45,7 +45,7 @@ namespace Qoollo.Concierge.UniversalExecution.AppModes
                         app.Start(arguments, executableBuilder);
                     }
                     return result;
-                }, "Install/uninstall program as service", ServiceInstallerMode.GetHelp()));
+                }, "install/uninstall program as service", ServiceInstallerMode.GetHelp()));
         }
 
         public override string StartInfo

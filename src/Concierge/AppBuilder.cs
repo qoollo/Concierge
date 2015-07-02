@@ -412,9 +412,10 @@ namespace Qoollo.Concierge
         /// <param name="name">Argument name</param>
         /// <param name="action">Argument handler</param>
         /// <param name="description">Argument description</param>
-        public void AddStartupParameter(string name, Action action, string description = "User startup parameter")
+        /// <param name="valueHint">Value description</param>
+        public void AddStartupParameter(string name, Action action, string description = "User startup parameter", string valueHint ="value")
         {
-            _parametersManager.Add(new CmdArgumentSpec(name, description, action, false, true));
+            _parametersManager.Add(new CmdArgumentSpec(name, description, action, false, true, valueHint));
         }
 
         /// <summary>
@@ -423,9 +424,10 @@ namespace Qoollo.Concierge
         /// <param name="name">Argument name</param>
         /// <param name="action">Argument handler</param>
         /// <param name="description">Argument description</param>
-        public void AddStartupParameter(string name, Action<string> action, string description = "User startup parameter")
+        /// <param name="valueHint">Value description</param>
+        public void AddStartupParameter(string name, Action<string> action, string description = "User startup parameter", string valueHint = "value")
         {
-            _parametersManager.Add(new CmdArgumentSpec(name, description, action, false, true));
+            _parametersManager.Add(new CmdArgumentSpec(name, description, action, false, true, valueHint));
         }
 
         #endregion

@@ -19,10 +19,14 @@ namespace Qoollo.Concierge.UniversalExecution.CommandLineArguments
 
         private string ArgumentHelp(CmdArgumentSpec spec)
         {
-            var ret =  string.Format("{0} {1}", spec.Key, spec.Description);
+            var display = spec.Key;
+            var description = spec.Description;
             if (spec.IsValueRequired)
-                ret += ". Value required";
-            return ret;
+            {
+                display += spec.ValueSeparator + "<" +spec.ValueHint+">";
+                description+= ". Value required";
+            }
+            return string.Format("{0}\t{1}", display, description);
         }
 
         public void Add(CmdArgumentSpec spec)

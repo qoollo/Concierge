@@ -29,16 +29,19 @@ namespace Qoollo.Concierge.UniversalExecution.Core
                     {
                         executableBuilder.WindowsServiceConfig.InstallName = str;
                         executableBuilder.WindowsServiceConfig.DisplayName = str;
-                    }, isVisible: true),
+                    }, isVisible: true, valueHint:"servicename"),
                 new CmdArgumentSpec("user", "change user",
-                    str => executableBuilder.WindowsServiceConfig.Username = str, isVisible: true),
+                    str => executableBuilder.WindowsServiceConfig.Username = str, 
+                    isVisible: true, valueHint:"[domain|.]\\user"),
                 new CmdArgumentSpec("password", "change password",
-                    str => executableBuilder.WindowsServiceConfig.Password = str, isVisible: true),
+                    str => executableBuilder.WindowsServiceConfig.Password = str, 
+                    isVisible: true, valueHint:"userpassword"),
                 new CmdArgumentSpec("host", "change connection to service",
                     str => _paramContainer.ServiceHostParameters.Add(new Uri(str)),
-                    isVisible: true),
+                    isVisible: true, valueHint:"hostaddress"),
                 new CmdArgumentSpec("timeout", "change service operations timeout",
-                    str => executableBuilder.WindowsServiceConfig.ServiceOperationsTimeoutMls = int.Parse(str), isVisible: true)
+                    str => executableBuilder.WindowsServiceConfig.ServiceOperationsTimeoutMls = int.Parse(str),
+                    isVisible: true, valueHint:"milliseconds")
             };
 
             return ret;
@@ -54,8 +57,8 @@ namespace Qoollo.Concierge.UniversalExecution.Core
             {
                 CmdArgForMode(new DebugMode(), executableBuilder),
                 CmdArgForMode(new InteractiveMode(), executableBuilder),
-                CmdArgForModeWithArgument(new ServiceInstallerMode(), executableBuilder),
-                CmdArgForModeWithArgument(new WinServiceMode(), executableBuilder),
+                CmdArgForModeWithArgument(new ServiceInstallerMode(), executableBuilder, "install/uninstall"),
+                CmdArgForModeWithArgument(new WinServiceMode(), executableBuilder, "service startup args"),
                 CmdArgForMode(new AttachMode(executableBuilder.WindowsServiceConfig), executableBuilder),
 
                 new CmdArgumentSpec("help", "show arguments",
@@ -103,7 +106,7 @@ namespace Qoollo.Concierge.UniversalExecution.Core
                 args => Start(mode, executableBuilder, args), true, true);
         }
 
-        private CmdArgumentSpec CmdArgForModeWithArgument(AppMode mode, ExecutableBuilder executableBuilder)
+        private CmdArgumentSpec CmdArgForModeWithArgument(AppMode mode, ExecutableBuilder executableBuilder, string valueHint = "args[]")
         {
             _modes.Add(mode.Name, mode);
             return new CmdArgumentSpec(":" + mode.Name, mode.Description,
@@ -114,7 +117,7 @@ namespace Qoollo.Concierge.UniversalExecution.Core
                         Console.WriteLine(result);
                     else
                         Start(mode, executableBuilder, args);
-                }, true, true);
+                }, true, true, valueHint: valueHint);
         }
 
         private bool IsValidAppMode(AppMode app, string[] args)
