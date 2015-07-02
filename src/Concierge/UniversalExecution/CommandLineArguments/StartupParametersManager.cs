@@ -14,7 +14,19 @@ namespace Qoollo.Concierge.UniversalExecution.CommandLineArguments
 
         public IEnumerable<string> Help()
         {
-            return _specs.Where(x => x.IsVisible).Select(x => x.Key + " " + x.Description);
+            return _specs.Where(x => x.IsVisible).Select(ArgumentHelp);
+        }
+
+        private string ArgumentHelp(CmdArgumentSpec spec)
+        {
+            var display = spec.Key;
+            var description = spec.Description;
+            if (spec.IsValueRequired)
+            {
+                display += spec.ValueSeparator + "<" +spec.ValueHint+">";
+                description+= ". Value required";
+            }
+            return string.Format("{0}\t{1}", display, description);
         }
 
         public void Add(CmdArgumentSpec spec)

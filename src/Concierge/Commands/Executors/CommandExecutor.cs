@@ -14,5 +14,10 @@ namespace Qoollo.Concierge.Commands.Executors
         public string Description { get; private set; }
 
         public abstract string Execute(CommandSpec command);
+
+        public virtual string GetHelp()
+        {
+            return Description;
+        }
     }
 }

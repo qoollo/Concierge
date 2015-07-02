@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using Qoollo.Concierge;
 using Qoollo.Concierge.Attributes;
+using Qoollo.Concierge.Commands;
 using Qoollo.Concierge.Extensions;
 using Qoollo.Concierge.WindowsService;
 
@@ -44,10 +45,21 @@ namespace TestProject
         }
     }
 
+    public class MyCommand:UserCommand
+    {
+        [Parameter(ShortKey = 'p', Description = "123213213")]
+        public int Port { get; set; }
+    }
     public class UserExecutor : InstallerBase, IUserExecutable
     {
         private bool _stop;
         public string Message = "Working";
+
+        [CommandHandler("command")]
+        public string Command(MyCommand command)
+        {
+            return "Ok";
+        }
 
         public void Start()
         {            

@@ -11,7 +11,7 @@ namespace Qoollo.Concierge.UniversalExecution.CommandLineArguments
         #region Constructors
 
         private CmdArgumentSpec(string key, string description, Action<string, string[]> processAction,
-            bool isValueRequired, bool isSetModeArgument, bool isVisible)
+            bool isValueRequired, bool isSetModeArgument, bool isVisible, string valueHint)
         {
             Contract.Requires(key != null);
             Contract.Requires(description != null);
@@ -23,32 +23,34 @@ namespace Qoollo.Concierge.UniversalExecution.CommandLineArguments
             Key = NormalizeKey(key);
             IsDisabled = false;
             IsSetModeArgument = isSetModeArgument;
+            ValueSeparator = " ";
+            ValueHint = valueHint;
 
             if (Key.Length == 0)
                 throw new ArgumentException("Key should be presented");
         }
 
         public CmdArgumentSpec(string key, string description, Action<string[]> processAction,
-            bool isLastArgument = false, bool isVisible = false)
-            : this(key, description, (value, args) => processAction(args), false, isLastArgument, isVisible)
+            bool isLastArgument = false, bool isVisible = false, string valueHint="value")
+            : this(key, description, (value, args) => processAction(args), false, isLastArgument, isVisible, valueHint)
         {
         }
 
         public CmdArgumentSpec(string key, string description, Action<string, string[]> processAction,
-            bool isLastArgument = false, bool isVisible = false)
-            : this(key, description, processAction, true, isLastArgument, isVisible)
+            bool isLastArgument = false, bool isVisible = false, string valueHint = "value")
+            : this(key, description, processAction, true, isLastArgument, isVisible, valueHint)
         {
         }
 
         public CmdArgumentSpec(string key, string description, Action processAction,
-            bool isLastArgument = false, bool isVisible = false)
-            : this(key, description, (value, args) => processAction(), false, isLastArgument, isVisible)
+            bool isLastArgument = false, bool isVisible = false, string valueHint = "value")
+            : this(key, description, (value, args) => processAction(), false, isLastArgument, isVisible, valueHint)
         {
         }
 
         public CmdArgumentSpec(string key, string description, Action<string> processAction,
-            bool isLastArgument = false, bool isVisible = false)
-            : this(key, description, (value, args) => processAction(value), true, isLastArgument, isVisible)
+            bool isLastArgument = false, bool isVisible = false, string valueHint = "value")
+            : this(key, description, (value, args) => processAction(value), true, isLastArgument, isVisible, valueHint)
         {
         }
 
@@ -102,6 +104,14 @@ namespace Qoollo.Concierge.UniversalExecution.CommandLineArguments
         #endregion
 
         public string Value { get; set; }
+        /// <summary>
+        /// Used in help. If argument is -c [count], then this value is 'count'
+        /// </summary>
+        public string ValueHint { get; private set; }
+        /// <summary>
+        /// Separator for key and value. WARNING: Used only for help right now.
+        /// </summary>
+        public string ValueSeparator { get; private set; }
 
         public void CallAction(string[] args)
         {

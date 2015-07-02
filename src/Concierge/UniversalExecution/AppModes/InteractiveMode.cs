@@ -45,7 +45,16 @@ namespace Qoollo.Concierge.UniversalExecution.AppModes
                         app.Start(arguments, executableBuilder);
                     }
                     return result;
-                }, "Install/uninstall program as service"));
+                }, "install/uninstall program as service", ServiceInstallerMode.GetHelp()));
+        }
+
+        public override string StartInfo
+        {
+            get
+            {
+                return string.Format(
+                        "Start {0} mode. Type help as command or :help as startup argumnet for addition info", Name);
+            }
         }
     }
 }

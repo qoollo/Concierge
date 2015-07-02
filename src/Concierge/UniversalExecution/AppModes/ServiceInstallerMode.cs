@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Runtime.Remoting.Messaging;
 using Qoollo.Concierge.Commands.Executors;
 using Qoollo.Concierge.UniversalExecution.CommandLineArguments;
 using Qoollo.Concierge.UniversalExecution.Core;
 using Qoollo.Concierge.UniversalExecution.ParamsContext;
+using Qoollo.Concierge.Whale;
 using Qoollo.Concierge.WindowsService;
 
 namespace Qoollo.Concierge.UniversalExecution.AppModes
@@ -164,6 +166,20 @@ namespace Qoollo.Concierge.UniversalExecution.AppModes
 
             if (winServiceConfig.StartAfterInstall)
                 installer.StartInstalledWindowsService();
+        }
+
+        public static string GetHelp()
+        {
+            var list = new List<string>
+            {
+                "install install service",
+                "uninstall uninstall service",
+                "stop stop service",
+                "start start service",
+                "restart restart service"
+            };
+
+            return CustomConsoleHelpers.FormatHelp(list);
         }
     }
 }

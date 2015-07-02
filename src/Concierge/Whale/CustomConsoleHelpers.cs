@@ -169,8 +169,8 @@ namespace Qoollo.Concierge.Whale
 
             foreach (string line in lines)
             {
-                string[] split = line.Split(new[] {' '}, 2);
-                builder.AppendLine(split.Length < 2 ? split[0] : PlaceStringAtWidth(split[0], split[1], 20));
+                string[] split = line.Split(new[] {'\t'}, 2);
+                builder.AppendLine(split.Length < 2 ? split[0] : PlaceStringAtWidth(split[0], split[1], 30));
             }
             return builder.ToString();
         }

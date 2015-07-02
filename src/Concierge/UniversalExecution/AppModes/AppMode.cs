@@ -36,7 +36,7 @@ namespace Qoollo.Concierge.UniversalExecution.AppModes
         public string Name { get; private set; }
         public string Description { get; private set; }
 
-        public string StartInfo
+        public virtual string StartInfo
         {
             get { return string.Format("Start {0} mode. Type help for addition info", Name); }
         }
