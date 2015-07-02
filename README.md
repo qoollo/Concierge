@@ -17,3 +17,7 @@ Make a console app work as an self-installable interactive WindowsService with d
 * Fix bug with Attach for one command
 * Change start message for Interactive mode
 
+##### 02.07.2015 nmenshov version 1.0.5.4
+
+* Value required info for startup help
+
