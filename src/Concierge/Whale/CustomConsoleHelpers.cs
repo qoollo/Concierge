@@ -163,13 +163,13 @@ namespace Qoollo.Concierge.Whale
             return builder.ToString();
         }
 
-        public static string FormatHelp(IEnumerable<string> lines)
+        public static string FormatHelp(IEnumerable<string> lines, char separator = ' ')
         {
             var builder = new StringBuilder();
 
             foreach (string line in lines)
             {
-                string[] split = line.Split(new[] {'\t'}, 2);
+                string[] split = line.Split(new[] { separator }, 2);
                 builder.AppendLine(split.Length < 2 ? split[0] : PlaceStringAtWidth(split[0], split[1], 30));
             }
             return builder.ToString();

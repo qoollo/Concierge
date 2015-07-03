@@ -62,7 +62,7 @@ namespace Qoollo.Concierge.UniversalExecution.Core
                 CmdArgForMode(new AttachMode(executableBuilder.WindowsServiceConfig), executableBuilder),
 
                 new CmdArgumentSpec("help", "show arguments",
-                    () => Console.WriteLine(CustomConsoleHelpers.FormatHelp(parametersManager.Help())), true, true),
+                    () => Console.WriteLine(CustomConsoleHelpers.FormatHelp(parametersManager.Help(),'\t')), true, true),
             };
             return ret;
         }
