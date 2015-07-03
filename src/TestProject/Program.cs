@@ -25,7 +25,8 @@ namespace TestProject
                 throw new NotImplementedException();
             });
 
-            appBuilder.WithWinServiceProps(t => t.Async = true)
+            appBuilder.WithDefaultStartupString(":debug -noi")
+                .WithWinServiceProps(t => t.Async = true)
                 .WithWinServiceProps(t => t.DisplayName = "QoolloEmptyService")
                 .WithWinServiceProps(t => t.InstallName = "QoolloEmptyService")
                 .WithWinServiceProps(
@@ -65,11 +66,11 @@ namespace TestProject
         {            
             _stop = false;
             Console.WriteLine("Starting");
-            for (int i = 0; i < 100000; i++)
+            for (int i = 0; i < 10; i++)
             {
                 Console.WriteLine(Message);
-                WriteMessage(@"M:\tmp\tmp.txt", i.ToString());
-                Thread.Sleep(2000);
+                WriteMessage(@"tmp.txt", i.ToString());
+                Thread.Sleep(200);
                 if (_stop)
                     break;
             }
