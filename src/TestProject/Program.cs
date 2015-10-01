@@ -14,35 +14,15 @@ namespace TestProject
     {
         private static void Main(string[] args)
         {
-
-            var user = new UserExecutor {Message = "OLOLOLOLO"};
-
-            var appBuilder = new AppBuilder(true, user);
-
-            appBuilder.AddStartupParameter("-s", () => { });
-            appBuilder.AddCommand("get", () =>
+            var appBuilder = new AppBuilder(true, typeof (UserExecutor))
+                .LogToFile(@"M:\tmp\log.txt");
+            appBuilder.AddStartupParameter("serv", value =>
             {
-                throw new NotImplementedException();
-            });
+                appBuilder.WindowsServiceConfig.DisplayName = value;
+                appBuilder.WindowsServiceConfig.InstallName = value;
+            }, "Change service name");
 
-            appBuilder.WithDefaultStartupString(":debug -noi")
-                .WithWinServiceProps(t => t.Async = true)
-                .WithWinServiceProps(t => t.DisplayName = "QoolloEmptyService")
-                .WithWinServiceProps(t => t.InstallName = "QoolloEmptyService")
-                .WithWinServiceProps(
-                    t =>
-                        t.Description =
-                            "This service is test only. Qoollo provides you with great open source .NET solutions.")
-                .WithWinServiceProps(t => t.StartAfterInstall = true)
-                .EnableControlCommands()
-                .EnableInfoCommands()
-                .LogToFile()
-                .UseExecutor(t =>
-                {
-                    t.OnStart(user.Start);
-                    t.OnStop(user.Stop);
-                })
-                .Run(args);
+            appBuilder.Run(args);
         }
     }
 
@@ -66,11 +46,12 @@ namespace TestProject
         {            
             _stop = false;
             Console.WriteLine("Starting");
-            for (int i = 0; i < 10; i++)
+            int t = DateTime.Now.Millisecond;
+            for (int i = 0; i < 100000; i++)
             {
                 Console.WriteLine(Message);
-                WriteMessage(@"tmp.txt", i.ToString());
-                Thread.Sleep(200);
+                WriteMessage(string.Format( @"M:\tmp\tmp{0}.txt", t), i.ToString());
+                Thread.Sleep(2000);
                 if (_stop)
                     break;
             }
@@ -88,7 +69,14 @@ namespace TestProject
 
         public IWindowsServiceConfig Configuration
         {
-            get { return new WinServiceConfig(); }
+            get
+            {
+                return new WinServiceConfig
+                {
+                    InstallName = "Test",
+                    DisplayName = "Test"
+                };
+            }
         }
 
         public static void WriteMessage(string file, string message, bool append = true)
