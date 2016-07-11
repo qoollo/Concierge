@@ -116,9 +116,10 @@ namespace Qoollo.Concierge.UniversalExecution.Core
         /// <param name="isAsyncStart"></param>
         /// <param name="args"></param>
         /// <param name="uri"></param>
+        /// <param name="interactive">Indicates, that program will listen for commands</param>
         /// <returns></returns>
         public IExecutable Build(CommandExecutorProxy commands, RunMode mode, bool isAsyncStart = false,
-            string[] args = null, Uri[] uri = null)
+            string[] args = null, Uri[] uri = null, bool interactive = true)
         {
             IExecutable userExecutable = Build();
             AddCommandsFromInstance(userExecutable, commands);
@@ -133,11 +134,13 @@ namespace Qoollo.Concierge.UniversalExecution.Core
             switch (mode)
             {
                 case RunMode.Debug:
-                    executable = new CommandSourceDecorator(executable, DebugSource(_commands));
+                    if (interactive)
+                        executable = new CommandSourceDecorator(executable, DebugSource(_commands));
                     break;
                 case RunMode.Service:
-                    executable =
-                        new ServiceRunDecorator(new CommandSourceDecorator(executable, ServiceSource(_commands, uri)));
+                    if (interactive)
+                        executable = new CommandSourceDecorator(executable, ServiceSource(_commands, uri));
+                    executable = new ServiceRunDecorator(executable);
                     break;
             }
             return executable;

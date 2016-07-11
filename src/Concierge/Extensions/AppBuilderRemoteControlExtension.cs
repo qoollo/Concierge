@@ -64,6 +64,21 @@ namespace Qoollo.Concierge.Extensions
         }
 
         /// <summary>
+        /// Special startup parameters: serv - change service name
+        /// </summary>
+        /// <param name="appBuilder"></param>
+        /// <returns></returns>
+        public static AppBuilder EnableSpecialStartupParameters(this AppBuilder appBuilder)
+        {
+            appBuilder.AddStartupParameter("serv", value =>
+            {
+                appBuilder.WindowsServiceConfig.DisplayName = value;
+                appBuilder.WindowsServiceConfig.InstallName = value;
+            }, "Change service name");
+            return appBuilder;
+        }
+
+        /// <summary>
         /// Log errors in file
         /// </summary>
         /// <param name="appBuilder"></param>
@@ -74,7 +89,7 @@ namespace Qoollo.Concierge.Extensions
             appBuilder.Logger.AddLogger(new FileLogger(filePath));
             return appBuilder;
         }
-
+        
         private static string Version()
         {
             Assembly assembly = Assembly.GetEntryAssembly();

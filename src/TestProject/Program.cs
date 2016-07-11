@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -10,38 +11,25 @@ using Qoollo.Concierge.WindowsService;
 
 namespace TestProject
 {
+    static class Messages
+    {
+        public static string LogPath = @"M:\tmp\concierge\log.txt";
+        public static string LogPathService = @"M:\tmp\concierge\log_service.txt";
+    }
+
     public class Program
     {
         private static void Main(string[] args)
         {
-
-            var user = new UserExecutor {Message = "OLOLOLOLO"};
-
-            var appBuilder = new AppBuilder(true, user);
-
-            appBuilder.AddStartupParameter("-s", () => { });
-            appBuilder.AddCommand("get", () =>
+            var appBuilder = new AppBuilder(true, typeof (UserExecutor))
+                .LogToFile(Messages.LogPath).EnableInfoCommands();
+            appBuilder.AddStartupParameter("serv", value =>
             {
-                throw new NotImplementedException();
-            });
+                appBuilder.WindowsServiceConfig.DisplayName = value;
+                appBuilder.WindowsServiceConfig.InstallName = value;
+            }, "Change service name");
 
-            appBuilder.WithWinServiceProps(t => t.Async = true)
-                .WithWinServiceProps(t => t.DisplayName = "QoolloEmptyService")
-                .WithWinServiceProps(t => t.InstallName = "QoolloEmptyService")
-                .WithWinServiceProps(
-                    t =>
-                        t.Description =
-                            "This service is test only. Qoollo provides you with great open source .NET solutions.")
-                .WithWinServiceProps(t => t.StartAfterInstall = true)
-                .EnableControlCommands()
-                .EnableInfoCommands()
-                .LogToFile()
-                .UseExecutor(t =>
-                {
-                    t.OnStart(user.Start);
-                    t.OnStop(user.Stop);
-                })
-                .Run(args);
+            appBuilder.Run(args);
         }
     }
 
@@ -50,6 +38,7 @@ namespace TestProject
         [Parameter(ShortKey = 'p', Description = "123213213")]
         public int Port { get; set; }
     }
+
     public class UserExecutor : InstallerBase, IUserExecutable
     {
         private bool _stop;
@@ -62,14 +51,16 @@ namespace TestProject
         }
 
         public void Start()
-        {            
+        {
+            Thread.Sleep(2000);
+            throw new NotImplementedException();
             _stop = false;
             Console.WriteLine("Starting");
             for (int i = 0; i < 100000; i++)
             {
                 Console.WriteLine(Message);
-                WriteMessage(@"M:\tmp\tmp.txt", i.ToString());
-                Thread.Sleep(2000);
+                WriteMessage(Messages.LogPathService, DateTime.Now.ToString(CultureInfo.InvariantCulture));
+                Thread.Sleep(1000);
                 if (_stop)
                     break;
             }
@@ -87,7 +78,15 @@ namespace TestProject
 
         public IWindowsServiceConfig Configuration
         {
-            get { return new WinServiceConfig(); }
+            get
+            {
+                return new WinServiceConfig
+                {
+                    InstallName = "Test",
+                    DisplayName = "Test",
+                    Async = true
+                };
+            }
         }
 
         public static void WriteMessage(string file, string message, bool append = true)
