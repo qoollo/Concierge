@@ -39,6 +39,9 @@ namespace Qoollo.Concierge.UniversalExecution.Core
                 new CmdArgumentSpec("host", "change connection to service",
                     str => _paramContainer.ServiceHostParameters.Add(new Uri(str)),
                     isVisible: true, valueHint: "hostaddress"),
+                new CmdArgumentSpec("ignore_remote_fail", "ignore remote connection or host fail",
+                    str => executableBuilder.WindowsServiceConfig.IgnoreRemoteConnectionFail = bool.Parse(str),
+                    isVisible: true, valueHint: "bool"),
                 new CmdArgumentSpec("timeout", "change service operations timeout",
                     str => executableBuilder.WindowsServiceConfig.ServiceOperationsTimeoutMls = int.Parse(str),
                     isVisible: true, valueHint: "milliseconds")
@@ -57,7 +60,7 @@ namespace Qoollo.Concierge.UniversalExecution.Core
             {
                 CmdArgForMode(new DebugMode(), executableBuilder),
                 CmdArgForMode(new InteractiveMode(), executableBuilder),
-                CmdArgForModeWithArgument(new ServiceInstallerMode(), executableBuilder, "install/uninstall"),
+                CmdArgForModeWithArgument(new ServiceInstallerMode(), executableBuilder, "install/uninstall/restart"),
                 CmdArgForModeWithArgument(new WinServiceMode(), executableBuilder, "service startup args"),
                 CmdArgForMode(new AttachMode(executableBuilder.WindowsServiceConfig), executableBuilder),
 
