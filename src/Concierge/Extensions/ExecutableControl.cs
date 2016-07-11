@@ -49,7 +49,7 @@ namespace Qoollo.Concierge.Extensions
             if (!_isStart)
             {
                 _isStart = true;
-                Task.Factory.StartNew(() =>
+                var startThread = new Thread(() =>
                 {
                     try
                     {
@@ -59,8 +59,22 @@ namespace Qoollo.Concierge.Extensions
                     {
                         _logger.Log(e.ToString());
                         throw;
-                    }                    
-                });
+                    }
+                }) {IsBackground = true};
+
+                startThread.Start();
+                //Task.Factory.StartNew(() =>
+                //{
+                //    try
+                //    {
+                //        _executable.Start();
+                //    }
+                //    catch (Exception e)
+                //    {
+                //        _logger.Log(e.ToString());
+                //        throw;
+                //    }                    
+                //});
             }
         }
 

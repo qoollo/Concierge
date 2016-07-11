@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -10,12 +11,18 @@ using Qoollo.Concierge.WindowsService;
 
 namespace TestProject
 {
+    static class Messages
+    {
+        public static string LogPath = @"M:\tmp\concierge\log.txt";
+        public static string LogPathService = @"M:\tmp\concierge\log_service.txt";
+    }
+
     public class Program
     {
         private static void Main(string[] args)
         {
             var appBuilder = new AppBuilder(true, typeof (UserExecutor))
-                .LogToFile(@"M:\tmp\log.txt");
+                .LogToFile(Messages.LogPath).EnableInfoCommands();
             appBuilder.AddStartupParameter("serv", value =>
             {
                 appBuilder.WindowsServiceConfig.DisplayName = value;
@@ -31,6 +38,7 @@ namespace TestProject
         [Parameter(ShortKey = 'p', Description = "123213213")]
         public int Port { get; set; }
     }
+
     public class UserExecutor : InstallerBase, IUserExecutable
     {
         private bool _stop;
@@ -43,15 +51,16 @@ namespace TestProject
         }
 
         public void Start()
-        {            
+        {
+            Thread.Sleep(2000);
+            throw new NotImplementedException();
             _stop = false;
             Console.WriteLine("Starting");
-            int t = DateTime.Now.Millisecond;
             for (int i = 0; i < 100000; i++)
             {
                 Console.WriteLine(Message);
-                WriteMessage(string.Format( @"M:\tmp\tmp{0}.txt", t), i.ToString());
-                Thread.Sleep(2000);
+                WriteMessage(Messages.LogPathService, DateTime.Now.ToString(CultureInfo.InvariantCulture));
+                Thread.Sleep(1000);
                 if (_stop)
                     break;
             }
@@ -74,7 +83,8 @@ namespace TestProject
                 return new WinServiceConfig
                 {
                     InstallName = "Test",
-                    DisplayName = "Test"
+                    DisplayName = "Test",
+                    Async = true
                 };
             }
         }

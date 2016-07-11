@@ -1,5 +1,4 @@
 ﻿using System;
-using Qoollo.Concierge.UniversalExecution.Core;
 using Qoollo.Concierge.WindowsService;
 
 namespace Qoollo.Concierge.UniversalExecution.Decorators

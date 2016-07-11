@@ -140,8 +140,7 @@ namespace Qoollo.Concierge.UniversalExecution.Core
                 case RunMode.Service:
                     if (interactive)
                         executable = new CommandSourceDecorator(executable, ServiceSource(_commands, uri));
-                    executable =
-                        new ServiceRunDecorator(executable);
+                    executable = new ServiceRunDecorator(executable);
                     break;
             }
             return executable;

@@ -13,7 +13,7 @@ namespace Qoollo.Concierge.UniversalExecution.Core
     internal class ModeManager
     {
         private readonly Dictionary<string, AppMode> _modes = new Dictionary<string, AppMode>();
-        private readonly ParamContainer _paramContainer = new ParamContainer();        
+        private readonly ParamContainer _paramContainer = new ParamContainer();
 
         /// <summary>
         ///     Параметры запуска
@@ -29,26 +29,26 @@ namespace Qoollo.Concierge.UniversalExecution.Core
                     {
                         executableBuilder.WindowsServiceConfig.InstallName = str;
                         executableBuilder.WindowsServiceConfig.DisplayName = str;
-                    }, isVisible: true, valueHint:"servicename"),
+                    }, isVisible: true, valueHint: "servicename"),
                 new CmdArgumentSpec("user", "change user",
-                    str => executableBuilder.WindowsServiceConfig.Username = str, 
-                    isVisible: true, valueHint:"[domain|.]\\user"),
+                    str => executableBuilder.WindowsServiceConfig.Username = str,
+                    isVisible: true, valueHint: "[domain|.]\\user"),
                 new CmdArgumentSpec("password", "change password",
-                    str => executableBuilder.WindowsServiceConfig.Password = str, 
-                    isVisible: true, valueHint:"userpassword"),
+                    str => executableBuilder.WindowsServiceConfig.Password = str,
+                    isVisible: true, valueHint: "userpassword"),
                 new CmdArgumentSpec("host", "change connection to service",
                     str => _paramContainer.ServiceHostParameters.Add(new Uri(str)),
-                    isVisible: true, valueHint:"hostaddress"),
+                    isVisible: true, valueHint: "hostaddress"),
                 new CmdArgumentSpec("timeout", "change service operations timeout",
                     str => executableBuilder.WindowsServiceConfig.ServiceOperationsTimeoutMls = int.Parse(str),
-                    isVisible: true, valueHint:"milliseconds")
+                    isVisible: true, valueHint: "milliseconds")
             };
 
             return ret;
         }
 
         public IEnumerable<CmdArgumentSpec> DefaultArgumentSpecsForModes(ExecutableBuilder executableBuilder,
-             StartupParametersManager parametersManager)
+            StartupParametersManager parametersManager)
         {
             executableBuilder.AddCommand(
                 CommandExecutorProxy.Build("help", arg => executableBuilder.GetHelp(arg), "show all commands"));
@@ -62,7 +62,7 @@ namespace Qoollo.Concierge.UniversalExecution.Core
                 CmdArgForMode(new AttachMode(executableBuilder.WindowsServiceConfig), executableBuilder),
 
                 new CmdArgumentSpec("help", "show arguments",
-                    () => Console.WriteLine(CustomConsoleHelpers.FormatHelp(parametersManager.Help(),'\t')), true, true),
+                    () => Console.WriteLine(CustomConsoleHelpers.FormatHelp(parametersManager.Help(), '\t')), true, true),
             };
             return ret;
         }
@@ -70,7 +70,7 @@ namespace Qoollo.Concierge.UniversalExecution.Core
         public void Start(AppMode app, ExecutableBuilder executableBuilder, string[] args = null)
         {
             app.SetParamContainer(_paramContainer);
-            if (app.GetType() != typeof(ServiceInstallerMode) && !IsValidAppMode(app, args))
+            if (app.GetType() != typeof (ServiceInstallerMode) && !IsValidAppMode(app, args))
                 return;
 
             bool first = args != null;
@@ -102,11 +102,12 @@ namespace Qoollo.Concierge.UniversalExecution.Core
         private CmdArgumentSpec CmdArgForMode(AppMode mode, ExecutableBuilder executableBuilder)
         {
             _modes.Add(mode.Name, mode);
-            return new CmdArgumentSpec(":"+mode.Name, mode.Description,
+            return new CmdArgumentSpec(":" + mode.Name, mode.Description,
                 args => Start(mode, executableBuilder, args), true, true);
         }
 
-        private CmdArgumentSpec CmdArgForModeWithArgument(AppMode mode, ExecutableBuilder executableBuilder, string valueHint = "args[]")
+        private CmdArgumentSpec CmdArgForModeWithArgument(AppMode mode, ExecutableBuilder executableBuilder,
+            string valueHint = "args[]")
         {
             _modes.Add(mode.Name, mode);
             return new CmdArgumentSpec(":" + mode.Name, mode.Description,
