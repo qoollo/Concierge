@@ -52,8 +52,6 @@ namespace TestProject
 
         public void Start()
         {
-            Thread.Sleep(2000);
-            throw new NotImplementedException();
             _stop = false;
             Console.WriteLine("Starting");
             for (int i = 0; i < 100000; i++)

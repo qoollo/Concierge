@@ -96,7 +96,7 @@ namespace Qoollo.Concierge.WindowsService
 
         public static void StopService(string serviceName, int timeoutMilliseconds = 30000)
         {
-            if (!IsServiceInstalled(serviceName))
+            if (!IsServiceInstalled(serviceName) || IsServiceStopped(serviceName))
                 return;
 
             ServiceController service = GetServiceController(serviceName);
