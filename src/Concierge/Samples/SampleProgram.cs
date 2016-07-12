@@ -14,6 +14,8 @@ namespace Qoollo.Concierge.Samples
             helper.AddStartupParameter("-s", () => Console.WriteLine("You type s in args"));
             helper.AddCommand("comm", () => "You enter comm");
 
+            //You start in interactive mode
+            helper.WithDefaultStartupString(DefaultStatupArguments.Interactive);
             helper.Run(args);
 
             // OR FAST RUN WITHOUT COMMANDS
