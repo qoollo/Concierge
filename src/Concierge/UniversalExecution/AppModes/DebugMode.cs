@@ -1,32 +1,30 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Qoollo.Concierge.Commands;
-using Qoollo.Concierge.Commands.Sources;
 using Qoollo.Concierge.UniversalExecution.Core;
-using Qoollo.Concierge.UniversalExecution.Decorators;
+using Qoollo.Concierge.Whale;
 using Qoollo.Concierge.WindowsService;
 
 namespace Qoollo.Concierge.UniversalExecution.AppModes
 {
     internal class DebugMode : AppMode
     {
-        public const string DefaultExitOnCompleteArg = "-noi";
-        public DebugMode(string[] args) : base("debug", "Run program in Debug mode", args)
-        {
-            NonInteractive = DefaultExitOnCompleteArg;
-        }
-
-        public DebugMode()
-            : base(AppModeNames.Debug, "Run program in Debug mode")
-        {
-            NonInteractive = DefaultExitOnCompleteArg;
-        }
-      
         /// <summary>
         ///If this argument is provided, program will exit after complete
         /// </summary>
-        public string NonInteractive { get; set; }
-        
+        public const string DefaultExitOnCompleteArg = "-noi";
+
+        public static string ModeInfo = "Run program in Debug mode (Add -noi arg for exit after complete)";
+
+        public DebugMode(string[] args) : base("debug", ModeInfo, args)
+        {
+        }
+
+        public DebugMode() : base(AppModeNames.Debug, ModeInfo)
+        {
+        }
+
         protected override void Build(string[] args, ExecutableBuilder executableBuilder)
         {
             if (!WinServiceHelpers.IsServiceInstalled(executableBuilder.WindowsServiceConfig.InstallName))
@@ -42,10 +40,10 @@ namespace Qoollo.Concierge.UniversalExecution.AppModes
 
         private void StartAsDebug(string[] args, ExecutableBuilder executableBuilder)
         {
-            var interactive = args == null || !args.Contains(NonInteractive);
+            var interactive = args == null || !args.Contains(DefaultExitOnCompleteArg);
 
             var executable = executableBuilder.Build(CommandExecutorProxy, RunMode.Debug,
-                executableBuilder.WindowsServiceConfig.Async, args,interactive:interactive);
+                executableBuilder.WindowsServiceConfig.Async, args, interactive: interactive);
 
             if (!interactive)
             {
@@ -59,6 +57,16 @@ namespace Qoollo.Concierge.UniversalExecution.AppModes
                 WinServiceMessages.ServiceStartedMessage(executableBuilder.WindowsServiceConfig.DisplayName));
 
             RegistrateCommand(CommandExecutorProxy.Build("exit", () => Executable.Stop(), "Stop program"));
+        }
+
+        public static string GetHelp()
+        {
+            var list = new List<string>
+            {
+                "noi program will exit after complete"
+            };
+
+            return CustomConsoleHelpers.FormatHelp(list);
         }
     }
 }

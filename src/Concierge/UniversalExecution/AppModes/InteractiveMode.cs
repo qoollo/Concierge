@@ -19,7 +19,7 @@ namespace Qoollo.Concierge.UniversalExecution.AppModes
             {
                 SetNextMode(new DebugMode(arguments));
                 Executable.Stop();
-            }, "Run program in debug mode"));
+            }, "Run program in Debug mode", DebugMode.GetHelp()));
 
             RegistrateCommand(CommandExecutorProxy.Build("attach", arguments =>
             {
@@ -45,7 +45,7 @@ namespace Qoollo.Concierge.UniversalExecution.AppModes
                         app.Start(arguments, executableBuilder);
                     }
                     return result;
-                }, "install/uninstall program as service", ServiceInstallerMode.GetHelp()));
+                }, "install/uninstall/restart program as service", ServiceInstallerMode.GetHelp()));
         }
 
         public override string StartInfo
