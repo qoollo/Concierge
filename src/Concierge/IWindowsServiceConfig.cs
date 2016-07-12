@@ -23,5 +23,7 @@ namespace Qoollo.Concierge
         string Username { set; get; }
 
         int ServiceOperationsTimeoutMls { set; get; }
+
+        bool IgnoreRemoteConnectionFail { set; get; }
     }
 }

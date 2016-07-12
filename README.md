@@ -1,6 +1,18 @@
 # Concierge
 Make a console app work as an self-installable interactive WindowsService with debug mode and commands
 
+##### 12.07.2016 nmenshov version 1.0.8
+
+* Add comments for modes
+* Add -noi flag description for debug mode
+* Change default wcf port
+
+##### 11.07.2016 nmenshov version 1.0.7
+
+* Add ignore wcf exceptions flag
+* Fix async start with default commands when error
+* Fix service stop when it not running
+
 ##### 02.07.2015 aershov version 1.0.5.5
 
 * Ability to add value hint to command line argument

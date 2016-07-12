@@ -170,7 +170,7 @@ namespace Qoollo.Concierge.Whale
             foreach (string line in lines)
             {
                 string[] split = line.Split(new[] { separator }, 2);
-                builder.AppendLine(split.Length < 2 ? split[0] : PlaceStringAtWidth(split[0], split[1], 30));
+                builder.AppendLine(split.Length < 2 ? split[0] : PlaceStringAtWidth(split[0], split[1], 40));
             }
             return builder.ToString();
         }

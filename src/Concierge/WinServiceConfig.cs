@@ -11,6 +11,7 @@ namespace Qoollo.Concierge
         public const bool StartDefault = true;
         public const bool AsyncStartDefault = true;
         public const int ServiceOperationsTimeoutMlsDefault = 10000;
+        public const bool IgnoreRemoteConnectionFaidDefault = true;
 
         private string _username;
 
@@ -23,6 +24,7 @@ namespace Qoollo.Concierge
             Password = PassDefault;
             Async = AsyncStartDefault;
             ServiceOperationsTimeoutMls = ServiceOperationsTimeoutMlsDefault;
+            IgnoreRemoteConnectionFail = IgnoreRemoteConnectionFaidDefault;
         }
 
         public string DisplayName { get; set; }
@@ -49,5 +51,6 @@ namespace Qoollo.Concierge
         }
 
         public int ServiceOperationsTimeoutMls { get; set; }
+        public bool IgnoreRemoteConnectionFail { get; set; }
     }
 }

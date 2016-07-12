@@ -303,7 +303,7 @@ namespace Qoollo.Concierge
         /// <param name="description">Command description</param>
         public void AddCommand(string name, Action<string[]> action, string description = "")
         {
-            _executableBuilder.AddCommand(CommandExecutorProxy.Build(name, action, description));
+            _executableBuilder.AddCommand(CommandExecutorProxy.Build(name, action, description, ""));
         }
 
         /// <summary>

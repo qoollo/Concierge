@@ -17,7 +17,7 @@ using Qoollo.Concierge.WindowsService;
 namespace Qoollo.Concierge.UniversalExecution.Core
 {
     internal class ExecutableBuilder
-    {        
+    {
         private readonly Type _type;
         private readonly CommandExecutorProxyAggregate _commands;
         internal WindowsServiceConfigBuilder WinServiceConfigBuilder = new WindowsServiceConfigBuilder();
@@ -28,7 +28,7 @@ namespace Qoollo.Concierge.UniversalExecution.Core
         #region Constructors
 
         public ExecutableBuilder(CommandExecutorProxy commands)
-        {            
+        {
             _commands = new CommandExecutorProxyAggregate(commands);
             FluentExecutor = new FluentExecutor();
         }
@@ -37,14 +37,14 @@ namespace Qoollo.Concierge.UniversalExecution.Core
             : this(executorProxy)
         {
             Contract.Requires(type != null);
-            _type = type;                    
+            _type = type;
         }
 
         public ExecutableBuilder(IUserExecutable executable, CommandExecutorProxy executorProxy)
             : this(executorProxy)
         {
-            Contract.Requires(executable!=null);
-            _executable = executable;            
+            Contract.Requires(executable != null);
+            _executable = executable;
         }
 
         #endregion
@@ -68,11 +68,11 @@ namespace Qoollo.Concierge.UniversalExecution.Core
         public void PrepareExecutableBuilder()
         {
             if (_type != null)
-                WinServiceConfigBuilder.SetNewConfig(((IUserExecutable)Build(_type)).Configuration);
+                WinServiceConfigBuilder.SetNewConfig(((IUserExecutable) Build(_type)).Configuration);
             else if (_executable != null)
                 WinServiceConfigBuilder.SetNewConfig(_executable.Configuration);
 
-            WinServiceConfigBuilder.ProcessActions();            
+            WinServiceConfigBuilder.ProcessActions();
         }
 
         public void SetNewCommandExecutorProxy(CommandExecutorProxy executorProxy, AppMode appMode)
@@ -86,9 +86,9 @@ namespace Qoollo.Concierge.UniversalExecution.Core
         }
 
         #region Build Executable
-        
+
         private IExecutable Build()
-        {            
+        {
             IExecutable ret;
 
             if (_executable != null) // instance
@@ -165,7 +165,7 @@ namespace Qoollo.Concierge.UniversalExecution.Core
 
         protected virtual CommandSource AttachToService(RemoteRouter router, string prefix = "")
         {
-            return new ConsoleCommandSource(router, prefix);            
+            return new ConsoleCommandSource(router, prefix);
         }
 
         protected virtual CommandSource DebugSource(CommandExecutorProxy commands, string prefix = "")
@@ -175,9 +175,10 @@ namespace Qoollo.Concierge.UniversalExecution.Core
 
         protected virtual CommandSource ServiceSource(CommandExecutorProxy commands, Uri[] baseAddress)
         {
-            return new WcfCommandSource(new LocalRouter(commands), baseAddress){Logger = Logger};
+            return new WcfCommandSource(new LocalRouter(commands), baseAddress,
+                WindowsServiceConfig.IgnoreRemoteConnectionFail) {Logger = Logger};
         }
-        
+
         #endregion
 
         #region GetConfig Type

@@ -158,9 +158,9 @@ namespace Qoollo.Concierge.Commands
             return new CommandExecutorWithDictionary(name, helpText, (n, dict) => action(dict));
         }
 
-        public static CommandExecutor Build(string name, Action<string[]> action, string helpText = "")
+        public static CommandExecutor Build(string name, Action<string[]> action, string helpText = "", string smartHelp = "")
         {
-            return new CommandExecutorWithArgs(name, helpText, (n, dict) => action(dict));
+            return new CommandExecutorWithArgs(name, helpText, (n, dict) => action(dict), smartHelp);
         }
 
         public static CommandExecutor Build(string name, Func<string[], string> action, string helpText = "", 

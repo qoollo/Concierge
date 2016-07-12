@@ -52,11 +52,9 @@ namespace TestProject
 
         public void Start()
         {
-            Thread.Sleep(2000);
-            throw new NotImplementedException();
             _stop = false;
             Console.WriteLine("Starting");
-            for (int i = 0; i < 100000; i++)
+            for (int i = 0; i < 1000; i++)
             {
                 Console.WriteLine(Message);
                 WriteMessage(Messages.LogPathService, DateTime.Now.ToString(CultureInfo.InvariantCulture));
